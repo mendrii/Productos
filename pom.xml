@@ -15,6 +15,7 @@
 	<description>tienda videojuegos</description>
 	<properties>
 		<java.version>17</java.version>
+		<datafaker.version>2.0.1</datafaker.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -40,9 +41,21 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
+ 			<groupId>net.datafaker</groupId>
+ 			<artifactId>datafaker</artifactId>
+  			<version>${datafaker.version}</version>
+			</dependency>
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<!-- MySQL Driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 
 		<!-- Lombok -->
