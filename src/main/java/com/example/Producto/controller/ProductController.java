@@ -35,7 +35,7 @@ public class ProductController {
         List<ProductModel> productos = productoService.findAll();
         if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
-        }
+        }                   
         List<EntityModel<ProductModel>> productosHateoas = productos.stream()
             .map(producto -> EntityModel.of(producto,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).buscar(producto.getId())).withSelfRel(),
