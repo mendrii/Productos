@@ -5,45 +5,66 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.example.Producto.client.PedidoClient;
 
-/**
- * Servicio para interactuar con el microservicio remoto de Pedidos mediante Feign
- */
+import java.util.Map;
+
 @Service
 public class PedidoIntegracionService {
 
     @Autowired
     private PedidoClient pedidoClient;
 
-    /**
-     * Obtiene todos los pedidos del servicio remoto
-     */
-    public ResponseEntity<?> obtenerTodosPedidos() {
+    public ResponseEntity<?> obtenerTodosPedidos(String token) {
         try {
-            return pedidoClient.obtenerTodosPedidos();
+            System.out.println(" Products → Llamando a Orders Service");
+            ResponseEntity<Map<String, Object>> response = pedidoClient.obtenerTodosPedidos(token);
+            System.out.println(" Products → Orders respondió correctamente");
+            return response;
         } catch (Exception e) {
-            return ResponseEntity.status(503).body("Error al conectar con el servicio de Pedidos: " + e.getMessage());
+            System.err.println(" Products → Error al conectar con Orders: " + e.getMessage());
+            return ResponseEntity.status(503).body(
+                Map.of(
+                    "success", false,
+                    "message", "Error al conectar con el servicio de Órdenes",
+                    "error", e.getMessage()
+                )
+            );
         }
     }
 
-    /**
-     * Obtiene un pedido específico por ID desde el servicio remoto
-     */
-    public ResponseEntity<?> obtenerPedidoPorId(Integer id) {
+    public ResponseEntity<?> obtenerPedidoPorId(Integer id, String token) {
         try {
-            return pedidoClient.obtenerPedidoPorId(id);
+            System.out.println(" Products → Obteniendo orden ID: " + id);
+            ResponseEntity<Map<String, Object>> response = pedidoClient.obtenerPedidoPorId(id, token);
+            System.out.println(" Products → Orden encontrada");
+            return response;
         } catch (Exception e) {
-            return ResponseEntity.status(503).body("Error al obtener el pedido: " + e.getMessage());
+            System.err.println(" Products → Error: " + e.getMessage());
+            return ResponseEntity.status(503).body(
+                Map.of(
+                    "success", false,
+                    "message", "Error al obtener el pedido",
+                    "error", e.getMessage()
+                )
+            );
         }
     }
 
-    /**
-     * Crea un nuevo pedido en el servicio remoto
-     */
-    public ResponseEntity<?> crearPedido(Object pedido) {
+    public ResponseEntity<?> crearPedido(Map<String, Object> pedido, String token) {
         try {
-            return pedidoClient.crearPedido(pedido);
+            System.out.println("Products → Creando nueva orden");
+            ResponseEntity<Map<String, Object>> response = pedidoClient.crearPedido(pedido, token);
+            System.out.println(" Products → Orden creada exitosamente");
+            return response;
         } catch (Exception e) {
-            return ResponseEntity.status(503).body("Error al crear el pedido: " + e.getMessage());
+            System.err.println(" Products → Error al crear orden: " + e.getMessage());
+            return ResponseEntity.status(503).body(
+                Map.of(
+                    "success", false,
+                    "message", "Error al crear el pedido",
+                    "error", e.getMessage()
+                )
+            );
         }
     }
 }
+
