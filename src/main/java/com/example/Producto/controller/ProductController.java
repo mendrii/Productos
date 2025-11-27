@@ -19,17 +19,14 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-
-
 @RestController
 @RequestMapping("/api/v1/productos")
-
 public class ProductController {
 
-  @Autowired
+    @Autowired
     private ProductService productoService;
 
-   @GetMapping
+    @GetMapping
     @Operation(summary = "Listar todos los productos", description = "Obtiene una lista de todos los productos disponibles en el inventario.")
     public ResponseEntity<CollectionModel<EntityModel<ProductModel>>> listar() {
         List<ProductModel> productos = productoService.findAll();
@@ -71,11 +68,12 @@ public class ProductController {
             );
             return ResponseEntity.ok(productHateoas);
         } catch (Exception e) {
+            System.err.println("Error buscando producto ID: " + id + " -> " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
-   @PutMapping("/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto", description = "Actualiza los detalles de un producto existente por su ID.")
     public ResponseEntity<EntityModel<ProductModel>> actualizar(@PathVariable Integer id, @RequestBody ProductModel product) {
         try {
@@ -85,29 +83,44 @@ public class ProductController {
             prod.setDescription(product.getDescription());
             prod.setPrice(product.getPrice());
             prod.setStockQuantity(product.getStockQuantity());
-            productoService.save(prod);
+            prod.setCategory(product.getCategory()); // ¡AGREGADO! Este campo faltaba
+            
+            ProductModel updated = productoService.save(prod);
 
-            EntityModel<ProductModel> productHateoas = EntityModel.of(prod,
+            EntityModel<ProductModel> productHateoas = EntityModel.of(updated,
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).buscar(id)).withSelfRel(),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ProductController.class).listar()).withRel("productos")
             );
             return ResponseEntity.ok(productHateoas);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            System.err.println("Error actualizando producto ID: " + id + " -> " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error inesperado al actualizar ID: " + id + " -> " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
     }
-   
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto", description = "Elimina un producto del inventario por su ID.")
-   public ResponseEntity<?> eliminar(@PathVariable int id){
-    try {
+    public ResponseEntity<?> eliminar(@PathVariable Integer id) {
+        try {
             productoService.delete(id);
             return ResponseEntity.noContent().build();
-    } catch (Exception e) {
+        } catch (RuntimeException e) {
+            System.err.println("Error eliminando producto ID: " + id + " -> " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error inesperado al eliminar ID: " + id + " -> " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 }
 
-}
+// ...existing code...
     
 

@@ -41,6 +41,10 @@ public class ProductService {
 
     public void delete(int id) {
         System.out.println("ProductService → Eliminando producto ID: " + id);
+        // Verifica que existe antes de eliminar
+        if (!productoRepository.existsById(id)) {
+            throw new RuntimeException("Producto no encontrado: " + id);
+        }
         productoRepository.deleteById(id);
         System.out.println("ProductService → Producto eliminado");
     }
