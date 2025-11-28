@@ -12,10 +12,10 @@ import net.datafaker.Faker;
  */
 @Component
 public class DataLoader implements CommandLineRunner {
-
+    // Inyección del repositorio de productos
     @Autowired
     private ProductRepository productRepository;
-
+    // Método que se ejecuta al iniciar la aplicación
     @Override
     public void run(String... args) throws Exception {
         // Cargar productos de videojuegos si la BD está vacía
@@ -38,7 +38,7 @@ public class DataLoader implements CommandLineRunner {
                 "Gran Turismo 7",
                 "Hades"
             };
-
+            // Categorías de consolas
             String[] consolas = {
                 "PlayStation 5",
                 "Xbox Series X",
@@ -48,7 +48,7 @@ public class DataLoader implements CommandLineRunner {
                 "PlayStation 4",
                 "Xbox One"
             };
-
+            // Géneros de videojuegos
             String[] generos = {
                 "Acción",
                 "RPG",
@@ -61,7 +61,7 @@ public class DataLoader implements CommandLineRunner {
                 "Puzzle",
                 "Plataforma"
             };
-
+            // Instancia de Faker para generar datos aleatorios
             Faker faker = new Faker();
             
             // Generar 15 videojuegos con datos realistas
